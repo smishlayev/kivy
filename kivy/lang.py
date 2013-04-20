@@ -589,9 +589,13 @@ class ProxyApp(object):
             from kivy.app import App
             app = App.get_running_app()
             object.__setattr__(self, '_obj', app)
+            def uncache(instance):
+                Logger.debug("LANG.PY: uncached app %r" % app)
+                object.__setattr__(self, '_obj', None)
             # Clear cached application instance, when it stops
-            app.bind(on_stop=lambda instance:
-                object.__setattr__(self, '_obj', None))
+            app.bind(on_stop=uncache)
+        else:
+            Logger.debug("LANG.PY: ensure app %r", % app)
         return app
 
     def __getattribute__(self, name):
